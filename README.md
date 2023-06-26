@@ -10,6 +10,13 @@ JA
   -B18 to second capacitor C/16 pin 1
   -A18 common to all capacitors pin 2
 
+JB
+  -E15 result bit 0
+  -E16 result bit 1
+  -D15 result bit 2
+  -C15 result bit 3
+  -J17 result bit 4
+
 JC
   -U12 to GROUND (comp P)
   -V12 common to all capacitors pin 2 (comp N)
