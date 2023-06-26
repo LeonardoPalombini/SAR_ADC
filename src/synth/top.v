@@ -1,35 +1,16 @@
 
 
 module top(
-    clk_in,
-    rst_in,
-    analog_cmp_p,
-    analog_cmp_n,
-    c[0],
-    c[1],
-    c[2],
-    c[3],
-    c[4],
-    c[5],
-    c_gnd,
-    sample_switch
+    input clk_in,
+    input rst_in,
+    input analog_cmp_p,
+    input analog_cmp_n,
+    output [5:0] c,
+    output c_gnd,
+    output sample_switch,
+    output [4:0] n
 );
 
-//inputs
-input clk_in;
-input rst_in;
-input analog_cmp_p;
-input analog_cmp_n;
-
-//outputs
-output c[0];
-output c[1];
-output c[2];
-output c[3];
-output c[4];
-output c[5];
-output c_gnd;
-output sample_switch;
 
 
 IBUFDS #(
@@ -70,15 +51,12 @@ adc ADC(
 
 
 //outputs assignment
-assign c[0] = wCap[0];
-assign c[1] = wCap[1];
-assign c[2] = wCap[2];
-assign c[3] = wCap[3];
-assign c[4] = wCap[4];
-assign c[5] = wCap[5];
+assign c = wCap;
 
 assign c_gnd = wCapGnd;
 assign sample_switch = wSample;
+
+assign n = wResult;
 
 
 endmodule
