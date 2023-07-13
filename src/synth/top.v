@@ -1,4 +1,4 @@
-
+`timescale 1 ns / 1 ns
 
 module top(
     input clk_in,
@@ -8,8 +8,34 @@ module top(
     output [5:0] c,
     output c_gnd,
     output sample_switch,
-    output [4:0] n
+    output [4:0] n,
+    output clock_test
 );
+
+parameter dim=6;
+reg[dim:0] countClk = 'b0;
+reg secClock = 'b0;
+
+wire cStop;
+
+assign clock_test = secClock;
+assign cStop = countClk[dim];
+assign ledR = rst_in;
+
+always @(posedge clk_in) begin
+    if(rst_in == 1'b1) begin
+        countClk <= { dim+1 {1'b0} };
+        secClock <= 1'b0;
+    end else if(rst_in == 1'b0 && cStop == 1'b1) begin
+        countClk <= { dim+1 {1'b0} };
+        secClock <= !secClock;
+    end else if(rst_in == 1'b0 && cStop == 1'b0) begin
+        countClk <= countClk +1;
+    end
+end
+
+
+
 
 
 
@@ -24,39 +50,41 @@ IBUFDS #(
 );
 
 
-wire clk;
-wire rst;
+//wire clk;
+//wire rst;
 
-wire[5:0] wCap;
-wire wSample;
-wire wCapGnd;
-wire[4:0] wResult;
-
+//wire[5:0] wCap;
+//wire wSample;
+//wire wCapGnd;
+//wire[4:0] wResult;
+//wire monitor;
 
 //input assignment
-assign clk = clk_in;
-assign rst = rst_in;
+//assign clk = clk_in;
+//assign rst = rst_in;
 
 
 //module instantiation
 adc ADC(
-    .rstb(rst),
-    .clk(clk),
+    .rstb(rst_in),
+    .clk(clk_in),
+    .sec_clk(secClock),
     .comp(analog_cmp),
-    .cap(wCap),
-    .gndA(wCapGnd),
-    .num(wResult),
-    .sample(wSample)
+    .cap(c),
+    .gndA(c_gnd),
+    .num(n),
+    .sample(sample_switch),
+    .mon(monitor)
 );
 
 
 //outputs assignment
-assign c = wCap;
+//assign c = wCap;
 
-assign c_gnd = wCapGnd;
-assign sample_switch = wSample;
+//assign c_gnd = wCapGnd;
+//assign sample_switch = wSample;
 
-assign n = wResult;
-
+//assign n = wResult;
+//assign ledC = secClock;
 
 endmodule

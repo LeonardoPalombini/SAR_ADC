@@ -6,11 +6,12 @@
 
 
 
-`timescale 1ns/1ps
+`timescale 1ns/1ns
 
 module adc (
     input rstb,
     input clk,
+    input sec_clk,
 
     input comp,             //comparator result
 
@@ -25,21 +26,32 @@ module adc (
 reg[2:0] state = 3'b111;    //current state: default 111 = "restart cycle"
 reg bit = 1'b0;             //latch for comparator result
 reg[4:0] rNum = 5'b00000;   //latch for cycle result
+reg lSClk;
+wire pe;
 
 assign mon = bit;
+assign pe = sec_clk & ~lSClk;
 
 always @(posedge clk) begin     //latch comparator result
     bit <= comp;
 end
 
+always @(posedge clk) begin     //latch comparator result
+    if(rstb == 1'b1) begin
+        lSClk <= 1'b0;
+    end else begin
+        lSClk <= sec_clk;
+    end
+end
+
 
 always @(posedge clk) begin
-    if(rstb == 1'b0) begin  //reset action
+    if(rstb == 1'b1) begin  //reset action
         state <= 3'b111;
         cap <= 6'b000000;
         gndA <= 1'b0;
         rNum <= 5'b00000;
-    end else begin
+    end else if(pe == 1'b1) begin
         if(state == 3'b111) begin
             sample <= 1'b1;     //common cap In to analog signal
             gndA <= 1'b0;       //all cap to common gnd
