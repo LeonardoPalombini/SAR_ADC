@@ -1,5 +1,5 @@
 # SAR_ADC
-
+# NEEDS UPDATE !!!
 PIN CONNECTIONS
 JA
   -G13 to capacitor C pin 1
